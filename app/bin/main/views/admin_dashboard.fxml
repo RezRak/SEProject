@@ -16,48 +16,8 @@
 
         <Button text="Add Employee" fx:id="addEmployeeButton" prefWidth="300" />
 
-        <VBox spacing="10">
-            <HBox spacing="10" style="-fx-border-color: black; -fx-padding: 10;">
-                <Label text="ID" />
-                <Label text="|" />
-                <Label text="Username" />
-                <Label text="|" />
-                <Label text="Full-Name" />
-                <Label text="|" />
-                <Label text="Email" />
-                <Label text="|" />
-                <Button text="Change Hourly Rate" fx:id="changeRateBtn1" />
-                <Label text="|" />
-                <Button text="Change Password" fx:id="changePasswordBtn1" />
-            </HBox>
-
-            <HBox spacing="10" style="-fx-border-color: black; -fx-padding: 10;">
-                <Label text="ID" />
-                <Label text="|" />
-                <Label text="Username" />
-                <Label text="|" />
-                <Label text="Full-Name" />
-                <Label text="|" />
-                <Label text="Email" />
-                <Label text="|" />
-                <Button text="Change Hourly Rate" fx:id="changeRateBtn2" />
-                <Label text="|" />
-                <Button text="Change Password" fx:id="changePasswordBtn2" />
-            </HBox>
-
-            <HBox spacing="10" style="-fx-border-color: black; -fx-padding: 10;">
-                <Label text="ID" />
-                <Label text="|" />
-                <Label text="Username" />
-                <Label text="|" />
-                <Label text="Full-Name" />
-                <Label text="|" />
-                <Label text="Email" />
-                <Label text="|" />
-                <Button text="Change Hourly Rate" fx:id="changeRateBtn3" />
-                <Label text="|" />
-                <Button text="Change Password" fx:id="changePasswordBtn3" />
-            </HBox>
+        <VBox fx:id="employeeContainer" spacing="10" alignment="CENTER">
+            
         </VBox>
     </VBox>
 </AnchorPane>

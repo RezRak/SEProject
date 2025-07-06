@@ -26,4 +26,13 @@ public class PunchController {
         statement.executeUpdate();
         System.out.println("User " + userId + " Punched In");
     }
+
+    public void punchOut(int userId) throws SQLException {
+        Connection conn = Database.getConnection();
+        String sql = "UPDATE punch_logs SET punch_out = NOW() WHERE user_id = ? AND punch_out IS NULL;";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setInt(1, userId);
+        statement.executeUpdate();
+        System.out.println("User " + userId + " Punched Out");
+    }
 }

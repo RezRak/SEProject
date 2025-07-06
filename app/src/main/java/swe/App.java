@@ -1,14 +1,22 @@
 package swe;
 
-import java.sql.Connection;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class App {
+public class App extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // This line was the problem - fixed the resource path
+        Parent root = FXMLLoader.load(getClass().getResource("/swe/report.fxml"));
+        primaryStage.setTitle("Payroll Report");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
-        Connection conn = Database.getConnection();
-        if (conn != null) {
-            System.out.println("Database connection successful!");
-        } else {
-            System.out.println("Database connection failed.");
-        }
+        launch(args);
     }
 }

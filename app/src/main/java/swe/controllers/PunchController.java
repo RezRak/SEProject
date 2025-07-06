@@ -17,4 +17,13 @@ public class PunchController {
         ResultSet rs = statement.executeQuery();
         return rs.next();
     }
+
+    public void punchIn(int userId) throws SQLException {
+        Connection conn = Database.getConnection();
+        String sql = "INSERT INTO punch_logs (user_id, punch_in) VALUES (?, NOW());";
+        PreparedStatement statement = conn.prepareStatement(sql);
+        statement.setInt(1, userId);
+        statement.executeUpdate();
+        System.out.println("User " + userId + " Punched In");
+    }
 }

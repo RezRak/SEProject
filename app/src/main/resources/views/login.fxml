@@ -4,13 +4,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.LoginController" prefWidth="400" prefHeight="250">
-    <VBox spacing="10" alignment="CENTER" layoutX="50" layoutY="40" prefWidth="300">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="swe.controllers.LoginController" prefWidth="400" prefHeight="400">
+    <VBox spacing="20" alignment="CENTER" layoutX="50" layoutY="20" prefWidth="300">
         <Label text="Login Page" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
-        
+
         <TextField fx:id="usernameField" promptText="Username" />
         <PasswordField fx:id="passwordField" promptText="Password" />
-
         <Button text="Login" onAction="#handleLogin"/>
+
+        <Separator />
+
+        <Label text="Clock In/Out" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <TextField fx:id="clockUsernameField" promptText="Username" />
+        <Button text="Clock In/Out" onAction="#handleClockInOut"/>
     </VBox>
 </AnchorPane>

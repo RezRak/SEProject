@@ -1,6 +1,6 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.14'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 repositories {
@@ -13,8 +13,19 @@ java {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+}
+
 application {
-    mainClass = 'swe.App' // Change if your main class is different
+    mainClass = 'swe.App'
     applicationDefaultJvmArgs = [
         '-Dprism.order=sw',
         '-Djavafx.embed.singleThread=true'
@@ -28,4 +39,11 @@ javafx {
 
 dependencies {
     implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'com.google.guava:guava:33.1.0-jre'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

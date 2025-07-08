@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="swe.ReportController"
+      alignment="CENTER">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
+
+    <HBox spacing="10">
+        <Label text="Start Date:"/>
+        <DatePicker fx:id="startDatePicker"/>
+        <Label text="End Date:"/>
+        <DatePicker fx:id="endDatePicker"/>
+        <Button text="Generate Report" onAction="#generateReport"/>
+    </HBox>
+
+    <TableView fx:id="reportTable" prefHeight="300">
+        <columns>
+            <TableColumn fx:id="employeeColumn" text="Employee Name" />
+            <TableColumn fx:id="periodStartColumn" text="Period Start" />
+            <TableColumn fx:id="periodEndColumn" text="Period End" />
+            <TableColumn fx:id="totalHoursColumn" text="Total Hours" />
+            <TableColumn fx:id="totalPayColumn" text="Total Pay" />
+        </columns>
+    </TableView>
+
+    <Button text="Exit" onAction="#exit"/>
+</VBox>

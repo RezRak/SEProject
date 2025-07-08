@@ -9,9 +9,8 @@ import javafx.stage.Stage;
 public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // This line was the problem - fixed the resource path
-        Parent root = FXMLLoader.load(getClass().getResource("/swe/report.fxml"));
-        primaryStage.setTitle("Payroll Report");
+        Parent root = FXMLLoader.load(getClass().getResource("/swe/login.fxml"));
+        primaryStage.setTitle("Login");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

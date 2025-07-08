@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class Database {
     public static Connection getConnection() {
         try {
-            String url = "jdbc:mysql://137.184.27.234:3306/swe_project";
+            String url = "jdbc:mysql://137.184.27.234:3306/time_tracking";
             String username = "swe_user";
             String password = "@2025SWE";
 

@@ -7,13 +7,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'mysql:mysql-connector-java:8.0.33'
-    implementation 'com.google.guava:guava:33.1.0-jre'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -31,14 +24,24 @@ sourceSets {
     }
 }
 
-
 application {
     mainClass = 'swe.App'
+    applicationDefaultJvmArgs = [
+        '-Dprism.order=sw',
+        '-Djavafx.embed.singleThread=true'
+    ]
 }
 
 javafx {
-    version = "21"
+    version = "21.0.1"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+dependencies {
+    implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'com.google.guava:guava:33.1.0-jre'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {

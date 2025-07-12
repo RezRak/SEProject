@@ -31,6 +31,9 @@ public class ReportController {
     private TableColumn<PayrollReport, Double> totalHoursColumn;
 
     @FXML
+    private TableColumn<PayrollReport, Double> hourlyRateColumn;
+
+    @FXML
     private TableColumn<PayrollReport, Double> totalPayColumn;
 
     @FXML
@@ -39,6 +42,7 @@ public class ReportController {
         periodStartColumn.setCellValueFactory(new PropertyValueFactory<>("periodStart"));
         periodEndColumn.setCellValueFactory(new PropertyValueFactory<>("periodEnd"));
         totalHoursColumn.setCellValueFactory(new PropertyValueFactory<>("totalHours"));
+        hourlyRateColumn.setCellValueFactory(new PropertyValueFactory<>("hourlyRate"));
         totalPayColumn.setCellValueFactory(new PropertyValueFactory<>("totalPay"));
     }
 

@@ -27,6 +27,7 @@
             <TableColumn fx:id="periodStartColumn" text="Period Start" />
             <TableColumn fx:id="periodEndColumn" text="Period End" />
             <TableColumn fx:id="totalHoursColumn" text="Total Hours" />
+            <TableColumn fx:id="hourlyRateColumn" text="Hourly Rate" />
             <TableColumn fx:id="totalPayColumn" text="Total Pay" />
         </columns>
     </TableView>

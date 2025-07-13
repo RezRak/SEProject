@@ -1,10 +1,15 @@
 package swe.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
 
 public class LoginController {
@@ -18,6 +23,10 @@ public class LoginController {
     private final String DB_URL = "jdbc:mysql://137.184.27.234:3306/time_tracking";
     private final String DB_USER = "swe_user";
     private final String DB_PASSWORD = "@2025SWE";
+    private final String ADMIN_VIEW_PATH = "/views/admin_dashboard.fxml";
+    private final String ADMIN_VIEW_TITLE = "Administrator Dashboard";
+    private final String EMP_VIEW_PATH = "/views/employee_dashboard.fxml";
+    private final String EMP_VIEW_TITLE = "Employee Dashboard";
 
     @FXML
     private void handleLogin() {
@@ -68,12 +77,22 @@ public class LoginController {
     }
 
     private void goToAdminDashboard() {
-        System.out.println("Redirect to Admin Dashboard...");
-        // TODO: implement actual navigation
+        changeView(ADMIN_VIEW_PATH, ADMIN_VIEW_TITLE);
     }
 
     private void goToEmployeeDashboard() {
-        System.out.println("Redirect to Employee Dashboard...");
-        // TODO: implement actual navigation
+        changeView(EMP_VIEW_PATH, EMP_VIEW_TITLE);
+    }
+
+    private void changeView(String path, String title) {
+        try {
+            Parent parent = FXMLLoader.load(getClass().getResource(path));
+            Scene newScene = new Scene(parent);
+            Stage currenStage = (Stage) usernameField.getScene().getWindow();
+            currenStage.setTitle(title);
+            currenStage.setScene(newScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

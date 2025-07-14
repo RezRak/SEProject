@@ -6,7 +6,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 
 public class LoginController {
 
@@ -56,62 +55,6 @@ public class LoginController {
             } else {
                 showAlert("Username not found.");
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database error: " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleClockInOut() {
-        String username = clockUsernameField.getText().trim();
-        if (username.isEmpty()) {
-            showAlert("Please enter a username.");
-            return;
-        }
-
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String getUserIdSql = "SELECT id FROM users WHERE username = ?";
-            PreparedStatement userStmt = conn.prepareStatement(getUserIdSql);
-            userStmt.setString(1, username);
-            ResultSet userRs = userStmt.executeQuery();
-
-            if (!userRs.next()) {
-                showAlert("Username not found.");
-                return;
-            }
-
-            int userId = userRs.getInt("id");
-
-            String checkLatestPunchSql = "SELECT id, punch_out FROM punch_logs WHERE user_id = ? ORDER BY punch_in DESC LIMIT 1";
-            PreparedStatement checkStmt = conn.prepareStatement(checkLatestPunchSql);
-            checkStmt.setInt(1, userId);
-            ResultSet punchRs = checkStmt.executeQuery();
-
-            if (punchRs.next()) {
-                Timestamp punchOut = punchRs.getTimestamp("punch_out");
-
-                if (punchOut == null) {
-                    // perform punch out
-                    int punchId = punchRs.getInt("id");
-                    String updateSql = "UPDATE punch_logs SET punch_out = ? WHERE id = ?";
-                    PreparedStatement updateStmt = conn.prepareStatement(updateSql);
-                    updateStmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-                    updateStmt.setInt(2, punchId);
-                    updateStmt.executeUpdate();
-                    showInfo("Checked out successfully.");
-                    return;
-                }
-            }
-
-            // perform punch in
-            String insertSql = "INSERT INTO punch_logs (user_id, punch_in) VALUES (?, ?)";
-            PreparedStatement insertStmt = conn.prepareStatement(insertSql);
-            insertStmt.setInt(1, userId);
-            insertStmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            insertStmt.executeUpdate();
-            showInfo("Checked in successfully.");
 
         } catch (SQLException e) {
             e.printStackTrace();

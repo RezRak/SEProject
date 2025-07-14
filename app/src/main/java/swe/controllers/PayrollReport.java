@@ -8,7 +8,8 @@ public class PayrollReport {
     private double hourlyRate;
     private double totalPay;
 
-    public PayrollReport(String employeeName, String periodStart, String periodEnd, double totalHours, double hourlyRate, double totalPay) {
+    public PayrollReport(String employeeName, String periodStart, String periodEnd,
+                         double totalHours, double hourlyRate, double totalPay) {
         this.employeeName = employeeName;
         this.periodStart = periodStart;
         this.periodEnd = periodEnd;

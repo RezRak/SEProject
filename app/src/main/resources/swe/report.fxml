@@ -6,7 +6,7 @@
 
 <VBox spacing="10"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="swe.ReportController"
+      fx:controller="swe.controllers.ReportController"
       alignment="CENTER">
 
     <padding>

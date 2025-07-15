@@ -1,12 +1,16 @@
 package swe.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDateTime;
 
 public class LoginController {
 
@@ -16,12 +20,13 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
-    @FXML
-    private TextField clockUsernameField;
-
     private final String DB_URL = "jdbc:mysql://137.184.27.234:3306/time_tracking";
     private final String DB_USER = "swe_user";
     private final String DB_PASSWORD = "@2025SWE";
+    private final String ADMIN_VIEW_PATH = "/views/admin_dashboard.fxml";
+    private final String ADMIN_VIEW_TITLE = "Administrator Dashboard";
+    private final String EMP_VIEW_PATH = "/views/employee_dashboard.fxml";
+    private final String EMP_VIEW_TITLE = "Employee Dashboard";
 
     @FXML
     private void handleLogin() {
@@ -63,62 +68,6 @@ public class LoginController {
         }
     }
 
-    @FXML
-    private void handleClockInOut() {
-        String username = clockUsernameField.getText().trim();
-        if (username.isEmpty()) {
-            showAlert("Please enter a username.");
-            return;
-        }
-
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String getUserIdSql = "SELECT id FROM users WHERE username = ?";
-            PreparedStatement userStmt = conn.prepareStatement(getUserIdSql);
-            userStmt.setString(1, username);
-            ResultSet userRs = userStmt.executeQuery();
-
-            if (!userRs.next()) {
-                showAlert("Username not found.");
-                return;
-            }
-
-            int userId = userRs.getInt("id");
-
-            String checkLatestPunchSql = "SELECT id, punch_out FROM punch_logs WHERE user_id = ? ORDER BY punch_in DESC LIMIT 1";
-            PreparedStatement checkStmt = conn.prepareStatement(checkLatestPunchSql);
-            checkStmt.setInt(1, userId);
-            ResultSet punchRs = checkStmt.executeQuery();
-
-            if (punchRs.next()) {
-                Timestamp punchOut = punchRs.getTimestamp("punch_out");
-
-                if (punchOut == null) {
-                    // perform punch out
-                    int punchId = punchRs.getInt("id");
-                    String updateSql = "UPDATE punch_logs SET punch_out = ? WHERE id = ?";
-                    PreparedStatement updateStmt = conn.prepareStatement(updateSql);
-                    updateStmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-                    updateStmt.setInt(2, punchId);
-                    updateStmt.executeUpdate();
-                    showInfo("Checked out successfully.");
-                    return;
-                }
-            }
-
-            // perform punch in
-            String insertSql = "INSERT INTO punch_logs (user_id, punch_in) VALUES (?, ?)";
-            PreparedStatement insertStmt = conn.prepareStatement(insertSql);
-            insertStmt.setInt(1, userId);
-            insertStmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            insertStmt.executeUpdate();
-            showInfo("Checked in successfully.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Database error: " + e.getMessage());
-        }
-    }
-
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Action Failed");
@@ -127,21 +76,23 @@ public class LoginController {
         alert.showAndWait();
     }
 
-    private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
     private void goToAdminDashboard() {
-        System.out.println("Redirect to Admin Dashboard...");
-        // TODO: implement actual navigation
+        changeView(ADMIN_VIEW_PATH, ADMIN_VIEW_TITLE);
     }
 
     private void goToEmployeeDashboard() {
-        System.out.println("Redirect to Employee Dashboard...");
-        // TODO: implement actual navigation
+        changeView(EMP_VIEW_PATH, EMP_VIEW_TITLE);
+    }
+
+    private void changeView(String path, String title) {
+        try {
+            Parent parent = FXMLLoader.load(getClass().getResource(path));
+            Scene newScene = new Scene(parent);
+            Stage currenStage = (Stage) usernameField.getScene().getWindow();
+            currenStage.setTitle(title);
+            currenStage.setScene(newScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

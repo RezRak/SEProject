@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="swe.controllers.EmployeeDashboardController"
+            prefWidth="600" prefHeight="500">
+
+    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
+        <Label fx:id="welcomeLabel" text="Welcome!" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+        <Button fx:id="punchButton" text="Clock In / Clock Out" onAction="#handlePunch" prefWidth="200"/>
+
+        <Label text="Punch History" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+        <TableView fx:id="punchHistoryTable" prefHeight="300">
+            <columns>
+                <TableColumn fx:id="punchInCol" text="Punch In" prefWidth="250"/>
+                <TableColumn fx:id="punchOutCol" text="Punch Out" prefWidth="250"/>
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>

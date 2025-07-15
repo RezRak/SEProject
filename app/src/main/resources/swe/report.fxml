@@ -6,7 +6,7 @@
 
 <VBox spacing="10"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="swe.ReportController"
+      fx:controller="swe.controllers.ReportController"
       alignment="CENTER">
 
     <padding>
@@ -27,6 +27,7 @@
             <TableColumn fx:id="periodStartColumn" text="Period Start" />
             <TableColumn fx:id="periodEndColumn" text="Period End" />
             <TableColumn fx:id="totalHoursColumn" text="Total Hours" />
+            <TableColumn fx:id="hourlyRateColumn" text="Hourly Rate" />
             <TableColumn fx:id="totalPayColumn" text="Total Pay" />
         </columns>
     </TableView>

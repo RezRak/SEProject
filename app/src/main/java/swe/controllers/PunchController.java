@@ -8,23 +8,21 @@ import java.sql.SQLException;
 import swe.Database;
 
 public class PunchController {
-    Connection conn;
+    private final Connection conn;
 
-    public void updatePunchStatus(int userId) {
-        conn = Database.getConnection();
-        try {
-            if (isPunchedIn(userId)) {
-                punchOut(userId);
-            } else {
-                punchIn(userId);
-            }
-        } catch (SQLException e) {
-            System.err.println("Failed to update punch status for id: " + userId);
-            e.printStackTrace();
+    public PunchController(Connection conn) {
+        this.conn = conn;
+    }
+
+    public void updatePunchStatus(int userId) throws SQLException {
+        if (isPunchedIn(userId)) {
+            punchOut(userId);
+        } else {
+            punchIn(userId);
         }
     }
 
-    private boolean isPunchedIn(int userId) throws SQLException {
+    boolean isPunchedIn(int userId) throws SQLException {
         String sql = "SELECT * FROM punch_logs WHERE user_id = ? AND punch_out IS NULL;";
         PreparedStatement statement = conn.prepareStatement(sql);
         statement.setInt(1, userId);

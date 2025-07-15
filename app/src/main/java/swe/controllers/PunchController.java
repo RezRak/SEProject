@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import swe.Database;
-
 public class PunchController {
     private final Connection conn;
 

@@ -28,7 +28,7 @@ public class EditEmployee {
 
     }
 
-    public boolean addEmployee(String username, String full_name, String email, String password_hash, String role, double hourly_rate) {
+    public static boolean addEmployee(String username, String full_name, String email, String password_hash, String role, double hourly_rate) {
         String query = "INSERT INTO users (username, full_name, email, password_hash, role, hourly_rate) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
@@ -36,7 +36,7 @@ public class EditEmployee {
 
                 statement.setString(1, username);
                 statement.setString(2, full_name);
-                statement.setstring(3, email);
+                statement.setNString(3, email);
                 statement.setString(4, password_hash);
                 statement.setString(5, role);
                 statement.setDouble(6, hourly_rate);

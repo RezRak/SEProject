@@ -11,11 +11,5 @@
         <TextField fx:id="usernameField" promptText="Username" />
         <PasswordField fx:id="passwordField" promptText="Password" />
         <Button text="Login" onAction="#handleLogin"/>
-
-        <Separator />
-
-        <Label text="Clock In/Out" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-        <TextField fx:id="clockUsernameField" promptText="Username" />
-        <Button text="Clock In/Out" onAction="#handleClockInOut"/>
     </VBox>
 </AnchorPane>

@@ -1,12 +1,9 @@
 package swe.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import swe.controllers.EditEmployee;
 
 import java.sql.*;
@@ -26,9 +23,8 @@ public class AdminDashboardController {
     @FXML
     public void initialize() {
         loadEmployees();
-
         addEmployeeButton.setOnAction(e -> EditEmployee.addEmployee());
-        // Report button left unimplemented for now
+        // Generate report logic still unimplemented
     }
 
     private void loadEmployees() {
@@ -58,7 +54,30 @@ public class AdminDashboardController {
                 Button changePassword = new Button("Change Password");
                 changePassword.setOnAction(e -> EditEmployee.editEmployeePassword(id));
 
-                row.getChildren().addAll(info, changeRate, changePassword);
+                Button removeEmployee = new Button("Remove");
+                removeEmployee.setOnAction(e -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirm Delete");
+                    alert.setHeaderText("Are you sure you want to remove this employee?");
+                    alert.setContentText("This action cannot be undone.");
+
+                    alert.showAndWait().ifPresent(response -> {
+                        if (response == ButtonType.OK) {
+                            boolean success = EditEmployee.removeEmployee(id);
+                            if (success) {
+                                loadEmployees(); // refresh UI
+                            } else {
+                                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                errorAlert.setTitle("Error");
+                                errorAlert.setHeaderText("Failed to delete employee.");
+                                errorAlert.setContentText("Please check the database connection.");
+                                errorAlert.showAndWait();
+                            }
+                        }
+                    });
+                });
+
+                row.getChildren().addAll(info, changeRate, changePassword, removeEmployee);
                 employeeContainer.getChildren().add(row);
             }
 

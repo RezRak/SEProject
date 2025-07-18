@@ -67,5 +67,20 @@ public class EditEmployee {
                 return false;
              }
     }
+      public static boolean removeEmployee(int user_id) {
+         String query = "DELETE FROM users WHERE id = ? AND role = 'employee'";
+
+         try (Connection conn = DriverManager.getConnection(url, username, password);
+               PreparedStatement statement = conn.prepareStatement(query)) {
+
+               statement.setInt(1, user_id);
+               int rowsDeleted = statement.executeUpdate();
+               return rowsDeleted > 0;
+
+         } catch (SQLException e) {
+               e.printStackTrace();
+               return false;
+         }
+      }
     
 }

@@ -32,5 +32,8 @@
         </columns>
     </TableView>
 
-    <Button text="Exit" onAction="#exit"/>
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Export CSV" onAction="#exportToCSV"/>
+        <Button text="Exit" onAction="#exit"/>
+    </HBox>
 </VBox>

@@ -3,11 +3,16 @@ package swe.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
+
 import swe.Database;
 
 public class ReportController {
@@ -91,6 +96,47 @@ public class ReportController {
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Database Error:\n" + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void exportToCSV(ActionEvent event) {
+        ObservableList<PayrollReport> data = reportTable.getItems();
+
+        if (data.isEmpty()) {
+            showAlert("No data to export. Please generate a report first.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Report CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write("Employee Name,Period Start,Period End,Total Hours,Hourly Rate,Total Pay\n");
+
+                for (PayrollReport report : data) {
+                    writer.write(String.format("%s,%s,%s,%.2f,%.2f,%.2f\n",
+                            report.getEmployeeName(),
+                            report.getPeriodStart(),
+                            report.getPeriodEnd(),
+                            report.getTotalHours(),
+                            report.getHourlyRate(),
+                            report.getTotalPay()));
+                }
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Export Successful");
+                alert.setHeaderText(null);
+                alert.setContentText("Report exported successfully to:\n" + file.getAbsolutePath());
+                alert.showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error saving CSV:\n" + e.getMessage());
+            }
         }
     }
 

@@ -24,7 +24,8 @@ public class AdminDashboardController {
     public void initialize() {
         loadEmployees();
         addEmployeeButton.setOnAction(e -> EditEmployee.addEmployee());
-        // Generate report logic still unimplemented
+
+
     }
 
     private void loadEmployees() {
@@ -49,10 +50,12 @@ public class AdminDashboardController {
                 );
 
                 Button changeRate = new Button("Change Hourly Rate");
-                changeRate.setOnAction(e -> EditEmployee.editEmployeeHourlyRate(id));
+                // Temporarily disable to prevent error
+                // changeRate.setOnAction(e -> EditEmployee.editEmployeeHourlyRate(id));
 
                 Button changePassword = new Button("Change Password");
-                changePassword.setOnAction(e -> EditEmployee.editEmployeePassword(id));
+                // Temporarily disable to prevent error
+                // changePassword.setOnAction(e -> EditEmployee.editEmployeePassword(id));
 
                 Button removeEmployee = new Button("Remove");
                 removeEmployee.setOnAction(e -> {

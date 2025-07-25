@@ -39,13 +39,14 @@ public class LoginController {
         }
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String sql = "SELECT password_hash, role FROM users WHERE username = ?";
+            String sql = "SELECT id, password_hash, role FROM users WHERE username = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt("id");
                 String storedHash = rs.getString("password_hash");
                 String role = rs.getString("role");
 
@@ -53,7 +54,7 @@ public class LoginController {
                     if ("admin".equalsIgnoreCase(role)) {
                         goToAdminDashboard();
                     } else {
-                        goToEmployeeDashboard();
+                        goToEmployeeDashboard(userId, username);
                     }
                 } else {
                     showAlert("Incorrect password.");
@@ -80,17 +81,29 @@ public class LoginController {
         changeView(ADMIN_VIEW_PATH, ADMIN_VIEW_TITLE);
     }
 
-    private void goToEmployeeDashboard() {
-        changeView(EMP_VIEW_PATH, EMP_VIEW_TITLE);
+    private void goToEmployeeDashboard(int userId, String username) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(EMP_VIEW_PATH));
+            Parent parent = loader.load();
+
+            EmployeeDashboardController controller = loader.getController();
+            controller.setUserInfo(userId, username); // 👈 pass both userId and username
+
+            Stage currentStage = (Stage) usernameField.getScene().getWindow();
+            currentStage.setTitle(EMP_VIEW_TITLE);
+            currentStage.setScene(new Scene(parent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void changeView(String path, String title) {
         try {
             Parent parent = FXMLLoader.load(getClass().getResource(path));
             Scene newScene = new Scene(parent);
-            Stage currenStage = (Stage) usernameField.getScene().getWindow();
-            currenStage.setTitle(title);
-            currenStage.setScene(newScene);
+            Stage currentStage = (Stage) usernameField.getScene().getWindow();
+            currentStage.setTitle(title);
+            currentStage.setScene(newScene);
         } catch (IOException e) {
             e.printStackTrace();
         }

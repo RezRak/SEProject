@@ -66,6 +66,8 @@ public class ReportController {
         String startDate = startDatePicker.getValue().toString();
         String endDate = endDatePicker.getValue().toString();
 
+        calculateAndInsertPayroll(startDate, endDate); // ← Auto-inserts records before fetching
+
         String sql = "SELECT u.full_name, pr.period_start, pr.period_end, pr.total_hours, u.hourly_rate, pr.total_pay " +
                      "FROM payroll_reports pr " +
                      "JOIN users u ON pr.user_id = u.id " +
@@ -96,6 +98,56 @@ public class ReportController {
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Database Error:\n" + e.getMessage());
+        }
+    }
+
+    private void calculateAndInsertPayroll(String startDate, String endDate) {
+        String punchQuery = """
+            SELECT 
+                u.id AS user_id,
+                u.full_name,
+                u.hourly_rate,
+                SUM(TIMESTAMPDIFF(SECOND, p.punch_in, p.punch_out)) / 3600 AS total_hours
+            FROM punch_logs p
+            JOIN users u ON p.user_id = u.id
+            WHERE p.punch_in >= ? AND p.punch_out <= ? AND u.role = 'employee'
+            GROUP BY u.id
+        """;
+
+        String insertQuery = """
+            INSERT INTO payroll_reports (user_id, period_start, period_end, total_hours, total_pay)
+            VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE total_hours = VALUES(total_hours), total_pay = VALUES(total_pay)
+        """;
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement punchStmt = conn.prepareStatement(punchQuery);
+             PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+
+            punchStmt.setString(1, startDate);
+            punchStmt.setString(2, endDate);
+
+            ResultSet rs = punchStmt.executeQuery();
+
+            while (rs.next()) {
+                int userId = rs.getInt("user_id");
+                double hours = rs.getDouble("total_hours");
+                double rate = rs.getDouble("hourly_rate");
+                double pay = hours * rate;
+
+                insertStmt.setInt(1, userId);
+                insertStmt.setString(2, startDate);
+                insertStmt.setString(3, endDate);
+                insertStmt.setDouble(4, hours);
+                insertStmt.setDouble(5, pay);
+                insertStmt.addBatch();
+            }
+
+            insertStmt.executeBatch();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Error calculating payroll: " + e.getMessage());
         }
     }
 

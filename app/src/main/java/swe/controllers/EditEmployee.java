@@ -1,6 +1,9 @@
 package swe.controllers;
+
+import javafx.application.Platform;
+import javafx.scene.control.*;
 import java.sql.*;
-import javax.swing.*;
+import java.util.Optional;
 
 public class EditEmployee {
 
@@ -8,144 +11,201 @@ public class EditEmployee {
     private static final String username = "swe_user";
     private static final String password = "@2025SWE";
 
+    public static boolean editEmployeePassword(int userId) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Edit Password");
+        dialog.setHeaderText("Change Password for Employee ID: " + userId);
+        dialog.setContentText("Enter new password:");
 
-    public boolean editEmployeePassword(int user_id, String newPassword) {
-         String newPassword = JOptionPane.showInputDialog(null, "Enter new password for employee: " + user_id);
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty() || result.get().trim().isEmpty()) {
+            showAlert("Action cancelled: Invalid input");
+            return false;
+        }
 
-         if (newPassword == null || newPassword.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Action cancelled: Invalid input");
-            return;
-         }
+        String newPassword = result.get().trim();
+        String query = "UPDATE users SET password_hash = ? WHERE id = ? AND role = 'employee'";
 
-        String query = "UPDATE users SET password = ? WHERE user_id = ? AND role = 'employee'";
-
-         try (Connection conn = DriverManager.getConnection(url, username, password);
+        try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = conn.prepareStatement(query)) {
 
-                statement.setString(1, newPassword);
-                statement.setInt(2, user_id);
+            statement.setString(1, newPassword);
+            statement.setInt(2, userId);
 
-                int rowsUpdated = statement.executeUpdate();
-                
-                if (return rowsUpdated > 0) {
-                  JOptionPane.showMessageDialog(null, "Password changed successfully");
-                } else {
-                  JOptionPane.showMessageDialog(null, "Invalid input/Employee not found");
-                }
-
-             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-             }
-             
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                showInfo("Password changed successfully");
+                return true;
+            } else {
+                showAlert("Invalid input/Employee not found");
+                return false;
+            }
+        } catch (SQLException e) {
+            showAlert("Error: " + e.getMessage());
+            return false;
+        }
     }
 
-    public static boolean addEmployee(double hourly_rate) {
-        String username = JOptionPane.showInputDialog("Enter employee username: ");
-        String full_name = JOptionPane.showInputDialog("Enter employee full name: ");
-        String email = JOptionPane.showInputDialog("Enter employee email: ");
-        String password_hash = JOptionPane.showInputDialog("Enter employee password: ");
-        String role = JOptionPane.showInputDialog("Enter employee role: ");
-        String hourlyRateString = JOptionPane.showInputDialog("Enter employee hourly rate: ");
+    public static boolean addEmployee(double hourlyRate) {
+        TextInputDialog dialog1 = new TextInputDialog();
+        dialog1.setTitle("Add Employee");
+        dialog1.setHeaderText(null);
+        dialog1.setContentText("Enter username:");
+        Optional<String> usernameInput = dialog1.showAndWait();
 
-        if (username == null || full_name == null || email == null || password_hash == null || 
-        role == null || hourlyRateString == null || username.trim().isEmpty() || full_name.trim().isEmpty() ||
-        email.trim().isEmpty() || password_hash.trim().isEmpty() || role.trim().isEmpty() || hourlyRateString.trim().isEmpty()) {
-         JOptionPane.showMessageDialog(null, "Action cancelled: Invalid input");
-         return;
+        TextInputDialog dialog2 = new TextInputDialog();
+        dialog2.setTitle("Add Employee");
+        dialog2.setContentText("Enter full name:");
+        Optional<String> fullName = dialog2.showAndWait();
+
+        TextInputDialog dialog3 = new TextInputDialog();
+        dialog3.setTitle("Add Employee");
+        dialog3.setContentText("Enter email:");
+        Optional<String> email = dialog3.showAndWait();
+
+        TextInputDialog dialog4 = new TextInputDialog();
+        dialog4.setTitle("Add Employee");
+        dialog4.setContentText("Enter password:");
+        Optional<String> passwordHash = dialog4.showAndWait();
+
+        TextInputDialog dialog5 = new TextInputDialog("employee");
+        dialog5.setTitle("Add Employee");
+        dialog5.setContentText("Enter role:");
+        Optional<String> role = dialog5.showAndWait();
+
+        TextInputDialog dialog6 = new TextInputDialog();
+        dialog6.setTitle("Add Employee");
+        dialog6.setContentText("Enter hourly rate:");
+        Optional<String> rate = dialog6.showAndWait();
+
+        if (usernameInput.isEmpty() || fullName.isEmpty() || email.isEmpty() || passwordHash.isEmpty() ||
+            role.isEmpty() || rate.isEmpty()) {
+            showAlert("Action cancelled: Incomplete input");
+            return false;
         }
 
         try {
-            hourly_rate = Double.parseDouble(hourlyRateString);
-         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Action cancelled: Incorrect rate format");
-            return;
-         }
+            hourlyRate = Double.parseDouble(rate.get());
+        } catch (NumberFormatException e) {
+            showAlert("Invalid hourly rate format");
+            return false;
+        }
 
         String query = "INSERT INTO users (username, full_name, email, password_hash, role, hourly_rate) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = conn.prepareStatement(query)) {
 
-                statement.setString(1, username);
-                statement.setString(2, full_name);
-                statement.setString(3, email);
-                statement.setString(4, password_hash);
-                statement.setString(5, role);
-                statement.setDouble(6, hourly_rate);
+            statement.setString(1, usernameInput.get());
+            statement.setString(2, fullName.get());
+            statement.setString(3, email.get());
+            statement.setString(4, passwordHash.get());
+            statement.setString(5, role.get());
+            statement.setDouble(6, hourlyRate);
 
-                int rowsInserted = statement.executeUpdate();
-                
-                if (return rowsInserted > 0) {
-                  JOptionPane.showMessageDialog(null, "Employee added successfully.");
-                } else {
-                  JOptionPane.showMessageDialog(null, "Failed to add employee.");
-                }
-
-             } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-             }
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted > 0) {
+                showInfo("Employee added successfully");
+                return true;
+            } else {
+                showAlert("Failed to add employee");
+                return false;
+            }
+        } catch (SQLException e) {
+            showAlert("Error: " + e.getMessage());
+            return false;
+        }
     }
 
-    public boolean editEmployeeHourlyRate(int user_id, double newHourlyRate) {
-        String newRate = JOptionPane.showInputDialog(null, "Enter new hourly rate for employee: " + user_id);
-        
-        if (newRate == null || newRate.trim().isEmpty()) {
-         JOptionPane.showMessageDialog(null, "Action cancelled: Invalid input");
-         return;
-        }
-         try {
-            newHourlyRate = Double.parseDouble(newRate);
-         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Action cancelled: Incorrect rate format");
-            return;
-         }
+    public static boolean editEmployeeHourlyRate(int userId, double newRateValue) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Edit Hourly Rate");
+        dialog.setHeaderText("Change Hourly Rate for Employee ID: " + userId);
+        dialog.setContentText("Enter new rate:");
 
-        
-        String query = "UPDATE users SET hourly_rate = ? WHERE user_id = ? AND role = 'emplyee'";
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty() || result.get().trim().isEmpty()) {
+            showAlert("Action cancelled: Invalid input");
+            return false;
+        }
+
+        try {
+            newRateValue = Double.parseDouble(result.get().trim());
+        } catch (NumberFormatException e) {
+            showAlert("Invalid hourly rate format");
+            return false;
+        }
+
+        String query = "UPDATE users SET hourly_rate = ? WHERE id = ? AND role = 'employee'";
 
         try (Connection conn = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = conn.prepareStatement(query)) {
 
-                statement.setInt(1, user_id);
-                statement.setDouble(2, newHourlyRate);
+            statement.setDouble(1, newRateValue);
+            statement.setInt(2, userId);
 
-                int rowsUpdated = statement.executeUpdate();
-                
-                if (return rowsUpdated > 0) {
-                  JOptionPane.showMessageDialog(null, "Hourly Rate updated successfully");
-                } else {
-                  JOptionPane.showMessageDialog(null, "Invalid input/Employee not found");
-                }
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                showInfo("Hourly rate updated successfully");
+                return true;
+            } else {
+                showAlert("Invalid input/Employee not found");
+                return false;
+            }
+        } catch (SQLException e) {
+            showAlert("Error: " + e.getMessage());
+            return false;
+        }
+    }
 
-             } catch(SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-             }
-      }
-      public static boolean removeEmployee(int user_id) {
-         String deleteEmployee = JOptionPane.showInputDialog("Enter employee to be removed: ");
+    public static boolean removeEmployee(int userId) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Removal");
+        confirm.setHeaderText("Remove Employee ID: " + userId);
+        confirm.setContentText("This action cannot be undone.");
 
-         if (deleteEmployee == null || deleteEmployee.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Action cancelled: Invalid input");
-            return;
-         }
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.OK) {
+            showInfo("Action cancelled");
+            return false;
+        }
 
-         String query = "DELETE FROM users WHERE user_id = ? AND role = 'employee'";
+        String query = "DELETE FROM users WHERE id = ? AND role = 'employee'";
 
-         try (Connection conn = DriverManager.getConnection(url, username, password);
-               PreparedStatement statement = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement statement = conn.prepareStatement(query)) {
 
-               statement.setInt(1, user_id);
-               int rowsDeleted = statement.executeUpdate();
-              
-               if (return rowsDeleted > 0) {
-                  JOptionPane.showMessageDialog(null, "Employee removed successfully");
-               } else {
-                  JOptionPane.showMessageDialog(null, "Failed to remove employee");
-               }
+            statement.setInt(1, userId);
+            int rowsDeleted = statement.executeUpdate();
 
-         } catch (SQLException e) {
-               JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-         }
-      }
-    
+            if (rowsDeleted > 0) {
+                showInfo("Employee removed successfully");
+                return true;
+            } else {
+                showAlert("Failed to remove employee");
+                return false;
+            }
+        } catch (SQLException e) {
+            showAlert("Error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private static void showAlert(String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+
+    private static void showInfo(String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Success");
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
 }

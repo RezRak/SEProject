@@ -4,20 +4,30 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" prefWidth="900" prefHeight="600" style="-fx-background-color: #d9e9f6;">
-    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
-        <HBox spacing="10" alignment="CENTER">
-            <Label text="Start Date" />
-            <TextField fx:id="startDateField" prefWidth="120" />
-            <Label text="End Date" />
-            <TextField fx:id="endDateField" prefWidth="120" />
-            <Button text="Generate Report" fx:id="generateReportButton" />
-        </HBox>
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="swe.controllers.AdminDashboardController"
+            prefWidth="900" prefHeight="600"
+            style="-fx-background-color: #d9e9f6;">
 
+    <VBox alignment="TOP_CENTER"
+          spacing="20"
+          AnchorPane.topAnchor="20"
+          AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20">
+
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+
+        <!-- Just the Generate Report Button -->
+        <Button text="Generate Report" fx:id="generateReportButton" prefWidth="200" />
+
+        <!-- Add Employee -->
         <Button text="Add Employee" fx:id="addEmployeeButton" prefWidth="300" />
 
-        <VBox fx:id="employeeContainer" spacing="10" alignment="CENTER">
-            
-        </VBox>
+        <Button text="Logout" onAction="#handleLogout" prefWidth="200" />
+
+        <!-- Employee Container -->
+        <VBox fx:id="employeeContainer" spacing="10" alignment="CENTER" />
     </VBox>
 </AnchorPane>

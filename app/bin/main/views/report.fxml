@@ -4,33 +4,33 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox spacing="10"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="swe.controllers.ReportController"
-      alignment="CENTER">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="swe.controllers.ReportController"
+            prefWidth="900" prefHeight="600" style="-fx-background-color: #f0f8ff;">
+    
+    <VBox alignment="TOP_CENTER" spacing="20" AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
 
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20" />
-    </padding>
+        <!-- Date Range and Action Buttons -->
+        <HBox spacing="10" alignment="CENTER">
+            <Label text="Start Date" />
+            <DatePicker fx:id="startDatePicker" />
+            <Label text="End Date" />
+            <DatePicker fx:id="endDatePicker" />
+            <Button text="Generate Report" onAction="#generateReport" />
+            <Button text="Export to CSV" onAction="#exportToCSV" />
+            <Button text="Exit" onAction="#exit" />
+        </HBox>
 
-    <HBox spacing="10">
-        <Label text="Start Date:"/>
-        <DatePicker fx:id="startDatePicker"/>
-        <Label text="End Date:"/>
-        <DatePicker fx:id="endDatePicker"/>
-        <Button text="Generate Report" onAction="#generateReport"/>
-    </HBox>
+        <!-- Payroll Report Table -->
+        <TableView fx:id="reportTable" prefHeight="500">
+            <columns>
+                <TableColumn fx:id="employeeColumn" text="Employee Name" prefWidth="180" />
+                <TableColumn fx:id="periodStartColumn" text="Period Start" prefWidth="120" />
+                <TableColumn fx:id="periodEndColumn" text="Period End" prefWidth="120" />
+                <TableColumn fx:id="totalHoursColumn" text="Total Hours" prefWidth="100" />
+                <TableColumn fx:id="hourlyRateColumn" text="Hourly Rate" prefWidth="100" />
+                <TableColumn fx:id="totalPayColumn" text="Total Pay" prefWidth="120" />
+            </columns>
+        </TableView>
 
-    <TableView fx:id="reportTable" prefHeight="300">
-        <columns>
-            <TableColumn fx:id="employeeColumn" text="Employee Name" />
-            <TableColumn fx:id="periodStartColumn" text="Period Start" />
-            <TableColumn fx:id="periodEndColumn" text="Period End" />
-            <TableColumn fx:id="totalHoursColumn" text="Total Hours" />
-            <TableColumn fx:id="hourlyRateColumn" text="Hourly Rate" />
-            <TableColumn fx:id="totalPayColumn" text="Total Pay" />
-        </columns>
-    </TableView>
-
-    <Button text="Exit" onAction="#exit"/>
-</VBox>
+    </VBox>
+</AnchorPane>

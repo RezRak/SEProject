@@ -1,22 +1,26 @@
 package swe.controllers;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import swe.Database;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeDashboardController {
 
-    @FXML
-    private Label welcomeLabel;
-
-    @FXML
-    private Button punchButton;
+    @FXML private Label welcomeLabel;
+    @FXML private Button punchButton;
+    @FXML private TableView<PunchHistory> punchHistoryTable;
+    @FXML private TableColumn<PunchHistory, String> punchInCol;
+    @FXML private TableColumn<PunchHistory, String> punchOutCol;
 
     private int userId;
     private String username;
@@ -26,6 +30,13 @@ public class EmployeeDashboardController {
         this.userId = userId;
         this.username = username;
         welcomeLabel.setText("Welcome, " + username + "!");
+        loadPunchHistory(); // Load history when setting user
+    }
+
+    @FXML
+    public void initialize() {
+        punchInCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPunchIn()));
+        punchOutCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getPunchOut()));
     }
 
     @FXML
@@ -45,16 +56,19 @@ public class EmployeeDashboardController {
                 showInfo("You have clocked out.");
             }
 
-            // Optionally: print or log updated punch history
-            List<PunchHistory> history = getPunchHistoryForEmployee(userId);
-            history.forEach(System.out::println);
+            loadPunchHistory(); // Reload history after punch
 
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert("Database error: " + e.getMessage());
         }
     }
-    
+
+    private void loadPunchHistory() {
+        List<PunchHistory> history = getPunchHistoryForEmployee(userId);
+        punchHistoryTable.getItems().setAll(history);
+    }
+
     public static class PunchHistory {
         private final String punchIn;
         private final String punchOut;
@@ -78,7 +92,6 @@ public class EmployeeDashboardController {
         }
     }
 
-    
     public List<PunchHistory> getPunchHistoryForEmployee(int userId) {
         List<PunchHistory> historyList = new ArrayList<>();
         String query = "SELECT * FROM punch_logs WHERE user_id = ? ORDER BY punch_in DESC";
@@ -118,5 +131,22 @@ public class EmployeeDashboardController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void handleLogout() {
+        try {
+            // Load the login screen
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/login.fxml"));
+            Parent loginRoot = loader.load();
+
+            // Set the scene on the current stage
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(new Scene(loginRoot));
+            stage.setTitle("Login");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Failed to load login screen: " + e.getMessage());
+        }
     }
 }
